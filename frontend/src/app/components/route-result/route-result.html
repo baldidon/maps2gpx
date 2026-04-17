@@ -1,0 +1,22 @@
+<section class="mt-6 bg-white rounded-lg p-6 border border-slate-200 text-center">
+  <h2 class="text-green-600 mb-4">Percorso generato!</h2>
+  <div class="flex justify-center gap-8 mb-5">
+    <div class="flex flex-col">
+      <span class="text-2xl font-bold text-slate-800">{{ formatDistance(result().totalDistance) }}</span>
+      <span class="text-xs text-slate-500 uppercase tracking-wider">Distanza</span>
+    </div>
+    <div class="flex flex-col">
+      <span class="text-2xl font-bold text-slate-800">{{ result().totalPoints }}</span>
+      <span class="text-xs text-slate-500 uppercase tracking-wider">Punti GPS</span>
+    </div>
+  </div>
+  <div class="mb-5">
+    <app-route-map [points]="result().points" />
+  </div>
+  <button
+    class="px-6 py-3 rounded-lg text-base font-semibold cursor-pointer transition-colors bg-green-600 text-white hover:bg-green-700 border-none"
+    (click)="downloadClick.emit()"
+  >
+    Scarica {{ result().fileName }}
+  </button>
+</section>

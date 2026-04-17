@@ -1,0 +1,72 @@
+<section class="bg-white rounded-lg p-6 border border-slate-200 flex flex-col gap-4">
+  <label class="text-sm font-semibold text-slate-500" for="url-input">Link Google Maps</label>
+  <input
+    id="url-input"
+    type="text"
+    placeholder="Incolla qui il link di Google Maps..."
+    class="w-full px-3 py-3 border border-slate-200 rounded-lg text-base text-slate-800 bg-slate-50 focus:outline-none focus:border-blue-600 focus:ring-3 focus:ring-blue-600/10"
+    [ngModel]="url()"
+    (ngModelChange)="urlInput.emit($event)"
+    [disabled]="resolving()"
+  />
+  @if (resolving()) {
+    <p class="text-blue-600 text-sm text-center">Risoluzione link in corso...</p>
+  }
+
+  <div class="grid grid-cols-2 gap-4 max-[480px]:grid-cols-1">
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-semibold text-slate-500" for="profile-select">Mezzo di trasporto</label>
+      <select
+        id="profile-select"
+        class="w-full px-3 py-3 border border-slate-200 rounded-lg text-base text-slate-800 bg-slate-50 focus:outline-none focus:border-blue-600 focus:ring-3 focus:ring-blue-600/10"
+        [ngModel]="profile()"
+        (ngModelChange)="profileChange.emit($event)"
+      >
+        @for (p of profiles; track p.value) {
+          <option [value]="p.value">{{ p.label }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="flex flex-col gap-1.5">
+      <label class="text-sm font-semibold text-slate-500" for="route-name">Nome percorso (opzionale)</label>
+      <input
+        id="route-name"
+        type="text"
+        placeholder="es. Gita a Roma"
+        class="w-full px-3 py-3 border border-slate-200 rounded-lg text-base text-slate-800 bg-slate-50 focus:outline-none focus:border-blue-600 focus:ring-3 focus:ring-blue-600/10"
+        [ngModel]="routeName()"
+        (ngModelChange)="routeNameChange.emit($event)"
+      />
+    </div>
+  </div>
+
+  @if (waypoints().length >= 2) {
+    <div class="bg-green-50 border border-green-200 rounded-lg p-3">
+      <span class="inline-block bg-green-600 text-white text-xs font-semibold px-2 py-1 rounded-full mb-2">{{ waypoints().length }} tappe trovate</span>
+      <div class="flex flex-wrap gap-1.5">
+        @for (wp of waypoints(); track $index) {
+          <span class="text-xs bg-white border border-slate-200 px-2 py-1 rounded-full text-slate-500 font-mono">
+            {{ wp.lat.toFixed(4) }}, {{ wp.lng.toFixed(4) }}
+          </span>
+        }
+      </div>
+    </div>
+  }
+
+  @if (error()) {
+    <div class="bg-red-50 text-red-600 border border-red-200 rounded-lg p-3 text-sm">{{ error() }}</div>
+  }
+
+  <button
+    class="px-6 py-3 rounded-lg text-base font-semibold cursor-pointer transition-colors bg-blue-600 text-white hover:not-disabled:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed border-none"
+    (click)="generateClick.emit()"
+    [disabled]="loading() || waypoints().length < 2"
+  >
+    @if (loading()) {
+      Generazione in corso...
+    } @else {
+      Genera GPX
+    }
+  </button>
+</section>
